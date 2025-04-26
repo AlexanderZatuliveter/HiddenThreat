@@ -11,9 +11,12 @@ clock = pygame.time.Clock()
 player = Player(spawn_coordinates=(100, 100))
 
 while True:
+    events = pygame.event.get()
+    keys = pygame.key.get_pressed()
+    
     screen.fill((125, 125, 125))
 
-    for event in pygame.event.get():
+    for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -22,6 +25,8 @@ while True:
                 pygame.quit()
                 sys.exit()
 
+    player.update(keys=keys)
+    
     player.draw(screen=screen)
     
     pygame.display.update()
