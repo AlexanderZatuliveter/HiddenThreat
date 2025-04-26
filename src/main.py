@@ -1,10 +1,14 @@
 import sys
 import pygame
 
+from player import Player
+
 pygame.init()
 
 screen = pygame.display.set_mode((960, 540), pygame.RESIZABLE)
 clock = pygame.time.Clock()
+
+player = Player(spawn_coordinates=(100, 100))
 
 while True:
     screen.fill((125, 125, 125))
@@ -18,6 +22,9 @@ while True:
                 pygame.quit()
                 sys.exit()
 
+    player.draw(screen=screen)
+    
     pygame.display.update()
+    
 
     clock.tick(60)
