@@ -1,12 +1,14 @@
 import sys
 import pygame
 
+import consts
+
 from player import Player
 
 pygame.init()
 
 
-screen = pygame.display.set_mode((960, 540), pygame.RESIZABLE)
+screen = pygame.display.set_mode(consts.START_SCREEN_SIZE, pygame.RESIZABLE)
 player = Player(spawn_coordinates=(100, 100))
 
 
