@@ -5,31 +5,31 @@ from player import Player
 
 pygame.init()
 
-screen = pygame.display.set_mode((960, 540), pygame.RESIZABLE)
-clock = pygame.time.Clock()
 
+screen = pygame.display.set_mode((960, 540), pygame.RESIZABLE)
 player = Player(spawn_coordinates=(100, 100))
+
+
+clock = pygame.time.Clock()
 
 while True:
     events = pygame.event.get()
-    keys = pygame.key.get_pressed()
-    
-    screen.fill((125, 125, 125))
+    pressed_keys = pygame.key.get_pressed()
 
     for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                 pygame.quit()
                 sys.exit()
-
-    player.update(keys=keys)
     
-    player.draw(screen=screen)
+    screen.fill((125, 125, 125))
+
+    player.update(pressed_keys=pressed_keys)
+    player.draw(drawing_screen=screen)
     
     pygame.display.update()
-    
 
     clock.tick(60)
