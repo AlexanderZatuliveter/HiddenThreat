@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame
 import consts
 
@@ -5,52 +6,75 @@ import consts
 class Player(pygame.sprite.Sprite):
     '''Создание самого главного класса во всей игре - Player'''
 
-    def __init__(self, spawn_coordinates: tuple) -> None:
+    def __init__(self) -> None:
         '''Создание главной функции класса Player'''
         super().__init__()
 
-        self.__image = pygame.image.load('src/textures/player.png').convert_alpha()
-        self.__image = pygame.transform.scale(self.__image, (self.__image.get_width() * 10,
-                                                             self.__image.get_height() * 10))
+        self.__original_image = pygame.image.load('src/_content/images/player.png').convert_alpha()
 
-        self.__rect = self.__image.get_rect(center=spawn_coordinates)
+        self.__original_image = pygame.transform.scale(
+            self.__original_image,
+            (
+                self.__original_image.get_width() * 7,
+                self.__original_image.get_height() * 7
+            )
+        )
 
-        self.__speedx = consts.PLAYER_SPEED  # базовая скорость Player
-        # базовый коэффициент падения Player вниз
+        self.__image = self.__original_image.copy()
+        self.__rect = self.__image.get_rect()
+        self.__rect.topleft = (0, consts.START_SCREEN_HEIGHT - self.__rect.height)
+
+        self.__speedx = consts.PLAYER_SPEED
         self.__speed_of_falling_coefficient = consts.PLAYER_SPEED_OF_FALLING_COEFFICIENT
-        # сила с которой Player отталкивается от платформы (нижней границы экрана)
         self.__jump_force = consts.PLAYER_JUMP_FORCE
-        self.__speed_of_falling = 0  # скорость падения Player
+        self.__speed_of_falling = 0
 
-    def update(self, pressed_keys: pygame.key.ScancodeWrapper) -> None:
+    def update(self, pressed_keys: pygame.key.ScancodeWrapper, scale: float,
+               game_field_width: int, game_field_height: int) -> None:
         '''Создание функции update класса Player'''
 
-        # увеличение скорости падения Player
+        self.__speedx = consts.PLAYER_SPEED * scale
+        self.__speed_of_falling_coefficient = consts.PLAYER_SPEED_OF_FALLING_COEFFICIENT * scale
+        self.__jump_force = consts.PLAYER_JUMP_FORCE * scale
+
         self.__speed_of_falling += self.__speed_of_falling_coefficient
 
-        # проверка на то, что Player пересек нижнюю границу экрана
-        if self.__rect.bottomright[1] >= consts.START_SCREEN_HEIGHT:
+        if self.__rect.bottomright[1] >= game_field_height:
 
             '''остановка падения, и поднятие Player на высоту нижней границы экрана
             то-есть препятствование падению игрока ЗА нижнюю границу экрана'''
-            self.__speed_of_falling = 0
-            self.__rect.bottomright = (self.__rect.bottomright[0], consts.START_SCREEN_HEIGHT)
 
-            # проверка на прыжок, в момент, когда Player находится на платформе (нижней границе экрана)
+            self.__speed_of_falling = 0
+            self.__rect.bottomright = (self.__rect.bottomright[0], game_field_height)
+
             if pressed_keys[pygame.K_w]:
                 self.__speed_of_falling = -self.__jump_force
 
-        # проверка на нажатие клавиш для движений вправо и влево
         if pressed_keys[pygame.K_d]:
-            self.__rect.centerx += self.__speedx
+            self.__rect.centerx += int(self.__speedx)
         if pressed_keys[pygame.K_a]:
-            self.__rect.centerx -= self.__speedx
+            self.__rect.centerx -= int(self.__speedx)
 
-        # падение игрока вниз, то-есть искусственная гравитация
-        self.__rect.centery += self.__speed_of_falling
+        if self.__rect.bottomright[0] > game_field_width:
+            self.__rect.bottomright = (game_field_width, self.__rect.bottomright[1])
+        if self.__rect.topleft[0] < 0:  # 0 - start of the game field
+            self.__rect.topleft = (0, self.__rect.topleft[1])
 
-    def draw(self, drawing_screen: pygame.surface.Surface) -> None:
+        self.__rect.centery += int(self.__speed_of_falling)
+
+    def draw(self, screen: pygame.Surface, scale: Tuple[float, float]) -> None:
         '''Создание функции draw класса Player'''
+        self.__image = pygame.transform.scale(
+            self.__original_image,
+            (
+                self.__original_image.get_width() * scale[0],
+                self.__original_image.get_height() * scale[1]
+            )
+        )
+        self.__rect = self.__image.get_rect(center=self.__rect.center)
 
-        # отрисовка Player
-        drawing_screen.blit(self.__image, self.__rect)
+        screen.blit(self.__image, self.__rect)
+
+        if consts.IS_DEBUG:
+            '''Отрисовка границ Player на экране'''
+            pygame.draw.rect(screen, (255, 255, 255), self.__rect, 2)
