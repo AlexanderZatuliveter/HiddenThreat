@@ -2,6 +2,9 @@ import sys
 import pygame
 import consts
 from player import Player
+import ctypes
+
+ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
 pygame.init()
 
@@ -18,12 +21,10 @@ while True:
     events = pygame.event.get()
     pressed_keys = pygame.key.get_pressed()
 
-    scale_w = screen.get_width() / consts.START_SCREEN_WIDTH
-    scale_h = screen.get_height() / consts.START_SCREEN_HEIGHT
-    scale = (scale_w + scale_h) / 2
+    scale = screen.get_width() / consts.GAME_FIELD_WIDTH
 
-    game_field_width = int(consts.GAME_FIELD_WIDTH * scale_w)
-    game_field_height = int(consts.GAME_FIELD_HEIGHT * scale_h)
+    # game_field_width = int(consts.GAME_FIELD_WIDTH * scale_w)
+    # game_field_height = int(consts.GAME_FIELD_HEIGHT * scale_h)
 
     for event in events:
         if event.type == pygame.QUIT:
@@ -56,17 +57,9 @@ while True:
 
     screen.fill((125, 125, 125))
 
-    player.update(
-        pressed_keys=pressed_keys,
-        scale=scale,
-        game_field_width=game_field_width,
-        game_field_height=game_field_height
-    )
+    player.update(pressed_keys=pressed_keys)
 
-    player.draw(
-        screen=screen,
-        scale=(scale_w, scale_h)
-    )
+    player.draw(screen=screen, scale=scale)
 
     pygame.display.update()
 
