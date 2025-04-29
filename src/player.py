@@ -1,13 +1,11 @@
-from typing import Tuple
 import pygame
 import consts
 
 
 class Player(pygame.sprite.Sprite):
-    '''Создание самого главного класса во всей игре - Player'''
 
     def __init__(self) -> None:
-        '''Создание главной функции класса Player'''
+
         super().__init__()
 
         self.__original_image = pygame.image.load('src/_content/images/player.png').convert_alpha()
@@ -30,14 +28,13 @@ class Player(pygame.sprite.Sprite):
         self.__speed_of_falling = 0
 
     def update(self, pressed_keys: pygame.key.ScancodeWrapper) -> None:
-        '''Создание функции update класса Player'''
 
         self.__speed_of_falling += self.__speed_of_falling_coefficient
 
         if self.__rect.bottomright[1] >= consts.GAME_FIELD_HEIGHT:
 
-            '''остановка падения, и поднятие Player на высоту нижней границы экрана
-            то-есть препятствование падению игрока ЗА нижнюю границу экрана'''
+            '''остановка падения, и поднятие Player на высоту нижней границы игрового поля,
+            то-есть препятствование падению игрока ЗА нижнюю границу игрового поля'''
 
             self.__speed_of_falling = 0
             self.__rect.bottomright = (self.__rect.bottomright[0], consts.GAME_FIELD_HEIGHT)
@@ -50,15 +47,15 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[pygame.K_a]:
             self.__rect.centerx -= int(self.__speedx)
 
-        if self.__rect.bottomright[0] > consts.GAME_FIELD_WIDTH:  # GAME_FIELD_WIDTH - end of the game field
+        if self.__rect.bottomright[0] > consts.GAME_FIELD_WIDTH: 
             self.__rect.bottomright = (consts.GAME_FIELD_WIDTH, self.__rect.bottomright[1])
-        if self.__rect.topleft[0] < 0:  # 0 - start of the game field
+        if self.__rect.topleft[0] < 0:
             self.__rect.topleft = (0, self.__rect.topleft[1])
 
         self.__rect.centery += int(self.__speed_of_falling)
 
     def draw(self, screen: pygame.Surface, scale: float) -> None:
-        '''Создание функции draw класса Player'''
+
         self.__image = pygame.transform.scale(
             self.__original_image,
             (

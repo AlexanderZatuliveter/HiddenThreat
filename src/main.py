@@ -17,8 +17,7 @@ player = Player()
 
 clock = pygame.time.Clock()
 
-past_screen_width = screen.get_width()
-past_screen_height = screen.get_height()
+past_screen_size = screen.get_size()
 
 while True:
     events = pygame.event.get()
@@ -35,25 +34,18 @@ while True:
                 pygame.quit()
                 sys.exit()
         if event.type == pygame.VIDEORESIZE:
-            if screen.get_width() / 16 != screen.get_height() / 9:
-                if past_screen_width != screen.get_width():
-                    screen = pygame.display.set_mode(
-                        (
-                            screen.get_width(),
-                            int(screen.get_width() / 16 * 9)
-                        ),
-                        pygame.RESIZABLE
-                    )
-                elif past_screen_height != screen.get_height():
-                    screen = pygame.display.set_mode(
-                        (
-                            int(screen.get_height() / 9 * 16),
-                            screen.get_height()
-                        ),
-                        pygame.RESIZABLE
-                    )
-            past_screen_width = screen.get_width()
-            past_screen_height = screen.get_height()
+            if past_screen_size != screen.get_size() and screen.get_width() / screen.get_height() != consts.GAME_FIELD_PROPORTIONS:
+                new_scale_width = screen.get_height() / consts.GAME_FIELD_HEIGHT
+                new_scale_height = screen.get_width() / consts.GAME_FIELD_WIDTH
+                new_scale = max(new_scale_width, new_scale_height)
+                screen = pygame.display.set_mode(
+                    (
+                        consts.GAME_FIELD_WIDTH * new_scale,
+                        consts.GAME_FIELD_HEIGHT * new_scale
+                    ),
+                    pygame.RESIZABLE
+                )
+                past_screen_size = screen.get_size()
 
     screen.fill((125, 125, 125))
 
