@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
 
         self.__image = self.__original_image.copy()
         self.__rect = self.__image.get_rect()
-        self.__rect.topleft = (0, consts.START_SCREEN_HEIGHT - self.__rect.height)
+        self.__rect.topleft = (0, consts.GAME_FIELD_HEIGHT - self.__rect.height)
 
         self.__speedx = consts.PLAYER_SPEED
         self.__speed_of_falling_coefficient = consts.PLAYER_SPEED_OF_FALLING_COEFFICIENT

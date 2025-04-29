@@ -7,8 +7,11 @@ import ctypes
 ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
 pygame.init()
+info = pygame.display.Info()
 
-screen = pygame.display.set_mode((consts.START_SCREEN_WIDTH, consts.START_SCREEN_HEIGHT), pygame.RESIZABLE)
+screen_size = info.current_w * consts.MAIN_WINDOW_SCALE, info.current_h * consts.MAIN_WINDOW_SCALE
+
+screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 
 player = Player()
 
@@ -22,9 +25,6 @@ while True:
     pressed_keys = pygame.key.get_pressed()
 
     scale = screen.get_width() / consts.GAME_FIELD_WIDTH
-
-    # game_field_width = int(consts.GAME_FIELD_WIDTH * scale_w)
-    # game_field_height = int(consts.GAME_FIELD_HEIGHT * scale_h)
 
     for event in events:
         if event.type == pygame.QUIT:
